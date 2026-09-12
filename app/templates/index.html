@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}
+Samira — 21
+{% endblock %}
+
+{% block content %}
+
+<section class="landing">
+
+    <div class="landing-image">
+
+        <img
+           src="{{ url_for('static', filename='images/cover.jpeg') }}"
+            alt="Invitation anniversaire de Samira"
+        >
+
+    </div>
+
+    <div class="landing-overlay"></div>
+
+    <div class="landing-content">
+
+        <p class="eyebrow">
+            YOU'RE INVITED
+        </p>
+
+        <h1>
+            Samira's
+            <span>21st</span>
+        </h1>
+
+        <p class="landing-description">
+            An evening to celebrate,
+            remember and make new memories.
+        </p>
+
+        <a
+            href="{{ url_for('guest.guest') }}"
+            class="primary-button"
+        >
+            Enter the experience
+            <span>→</span>
+        </a>
+
+    </div>
+
+</section>
+
+{% endblock %}

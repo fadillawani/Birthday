@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% block title %}
+Samira's Wishlist
+{% endblock %}
+
+{% block content %}
+
+<section class="wishlist-page">
+
+    <!-- HEADER -->
+    <div class="wishlist-header">
+
+        <p class="eyebrow">
+            A LITTLE SOMETHING
+        </p>
+
+        <h1>
+            Samira's<br>
+            <em>wishlist.</em>
+        </h1>
+
+        <p class="wishlist-intro">
+            If you're wondering what would make her smile,
+            here are a few things she has been loving lately.
+        </p>
+
+    </div>
+
+
+    <!-- STATISTICS -->
+    <div class="wishlist-stats">
+
+        <span>
+            {{ gifts|length }} WISHES
+        </span>
+
+        <span>
+            {{ reserved_gifts|length }} SELECTED
+        </span>
+
+    </div>
+
+
+    <!-- GIFTS -->
+    <div class="wishlist-grid">
+
+        {% for gift in gifts %}
+
+        <article class="gift-card">
+
+            <!-- IMAGE -->
+            <div class="gift-image">
+
+                {% if gift.image %}
+
+                    <img
+                        src="{{ url_for(
+                            'static',
+                            filename='images/wishlist/' + gift.image
+                        ) }}"
+                        alt="{{ gift.name }}"
+                        onerror="
+                            this.parentElement.classList.add('image-placeholder');
+                            this.style.display='none';
+                        "
+                    >
+
+                {% else %}
+
+                    <div class="image-placeholder"></div>
+
+                {% endif %}
+
+
+                <span class="gift-category">
+                    {{ gift.category }}
+                </span>
+
+            </div>
+
+
+            <!-- CONTENT -->
+            <div class="gift-content">
+
+                <div class="gift-number">
+                    {{ "%02d"|format(loop.index) }}
+                </div>
+
+                <h2>
+                    {{ gift.name }}
+                </h2>
+
+                <p>
+                    {{ gift.description }}
+                </p>
+
+
+                <!-- ACTIONS -->
+                <div class="gift-footer">
+
+                    {% if gift.product_url %}
+
+                    <a
+                        href="{{ gift.product_url }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="gift-link"
+                    >
+                        View the gift
+                        <span>↗</span>
+                    </a>
+
+                    {% endif %}
+
+
+                    {% if gift.id in reserved_gifts %}
+
+                    <div class="reserved-label">
+
+                        <span>✓</span>
+
+                        Reserved
+
+                    </div>
+
+                    {% else %}
+
+                    <form
+                        action="{{ url_for(
+                            'guest.reserve_gift',
+                            gift_id=gift.id
+                        ) }}"
+                        method="POST"
+                    >
+
+                        <button
+                            type="submit"
+                            class="gift-button"
+                        >
+
+                            I'll get this
+
+                            <span>→</span>
+
+                        </button>
+
+                    </form>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </article>
+
+        {% else %}
+
+        <!-- NO GIFTS -->
+        <div class="wishlist-empty">
+
+            <p>
+                The wishlist is currently empty.
+            </p>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+
+    <!-- FOOTER -->
+    <div class="wishlist-footer">
+
+        <p>
+            Thank you for celebrating this special day
+            with Samira.
+        </p>
+
+        <span class="wishlist-ending">
+            With love ♡
+        </span>
+
+    </div>
+
+</section>
+
+{% endblock %}

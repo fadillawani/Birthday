@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block title %}
+Your Invitation — Samira's 21st
+{% endblock %}
+
+{% block content %}
+
+<section class="invitation-page">
+
+    <div class="invitation-wrapper">
+
+        <p class="eyebrow">
+            YOUR PERSONAL INVITATION
+        </p>
+
+        <!-- CARTE À TÉLÉCHARGER -->
+        <div class="invitation-card" id="invitation-card">
+
+            <div class="invitation-top">
+                <span>21</span>
+                <span>2026</span>
+            </div>
+
+            <div class="invitation-main">
+
+                <p class="small-text">
+                    DEAR {{ guest.name.upper() }},
+                </p>
+
+                <h1>
+                    You are<br>
+                    <em>invited.</em>
+                </h1>
+
+                <p class="invitation-text">
+                    Samira would love to have you there
+                    to celebrate this special milestone
+                    together.
+                </p>
+
+                <div class="event-details">
+
+                    <div>
+                        <span>DATE</span>
+                        <strong>COMING SOON</strong>
+                    </div>
+
+                    <div>
+                        <span>TIME</span>
+                        <strong>COMING SOON</strong>
+                    </div>
+
+                    <div>
+                        <span>LOCATION</span>
+                        <strong>COMING SOON</strong>
+                    </div>
+
+                </div>
+
+                <p class="relationship">
+                    Your invitation has been prepared
+                    especially for you.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- DOWNLOAD -->
+
+        <div class="download-section">
+
+            <button
+                type="button"
+                id="download-invitation"
+                class="download-button"
+            >
+                Download my invitation
+                <span>↓</span>
+            </button>
+
+            <p class="download-info">
+                Save your personalized invitation to your device.
+            </p>
+
+        </div>
+
+
+        <!-- RSVP -->
+
+        <div class="rsvp-section">
+
+            <p class="eyebrow">
+                RSVP
+            </p>
+
+            <h2>
+                Will you<br>
+                <em>be there?</em>
+            </h2>
+
+            <form
+                action="{{ url_for('guest.rsvp') }}"
+                method="POST"
+                class="rsvp-form"
+            >
+
+                <button
+                    type="submit"
+                    name="response"
+                    value="yes"
+                    class="rsvp-button"
+                >
+                    <span>01</span>
+                    Yes, I'll be there
+                </button>
+
+                <button
+                    type="submit"
+                    name="response"
+                    value="maybe"
+                    class="rsvp-button"
+                >
+                    <span>02</span>
+                    I'm not sure yet
+                </button>
+
+                <button
+                    type="submit"
+                    name="response"
+                    value="no"
+                    class="rsvp-button"
+                >
+                    <span>03</span>
+                    Sadly, I can't make it
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- HTML2CANVAS -->
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+<script>
+
+document
+    .getElementById("download-invitation")
+    .addEventListener("click", async function () {
+
+        const card = document.getElementById("invitation-card");
+        const button = this;
+
+        button.disabled = true;
+        button.innerHTML = "Preparing invitation...";
+
+        try {
+
+            const canvas = await html2canvas(card, {
+                scale: 2,
+                useCORS: true,
+                backgroundColor: "#f3f1ed"
+            });
+
+            const link = document.createElement("a");
+
+            link.download =
+                "Samira-21st-Invitation-{{ guest.name|replace(' ', '-') }}.png";
+
+            link.href = canvas.toDataURL("image/png");
+
+            link.click();
+
+        } catch (error) {
+
+            console.error(
+                "Unable to download invitation:",
+                error
+            );
+
+            alert(
+                "Sorry, the invitation could not be downloaded."
+            );
+
+        } finally {
+
+            button.disabled = false;
+
+            button.innerHTML = `
+                Download my invitation
+                <span>↓</span>
+            `;
+        }
+
+    });
+
+</script>
+
+{% endblock %}
