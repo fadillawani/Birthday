@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}
-Your Invitation — Samira's 21st
+Invitation — Samira's 21st
 {% endblock %}
 
 {% block content %}
@@ -14,54 +14,115 @@ Your Invitation — Samira's 21st
             YOUR PERSONAL INVITATION
         </p>
 
-        <!-- CARTE À TÉLÉCHARGER -->
+        <!-- INVITATION CARD -->
         <div class="invitation-card" id="invitation-card">
 
-            <div class="invitation-top">
-                <span>21</span>
+            <!-- TOP -->
+            <div class="invitation-card-top">
+                <span>THE CELEBRATION</span>
                 <span>2026</span>
             </div>
 
-            <div class="invitation-main">
 
-                <p class="small-text">
-                    DEAR {{ guest.name.upper() }},
+            <!-- MAIN CONTENT -->
+            <div class="invitation-card-content">
+
+                <p class="invitation-name">
+                    DEAR {{ guest.name.upper() }}
                 </p>
 
-                <h1>
-                    You are<br>
-                    <em>invited.</em>
-                </h1>
+                <div class="invitation-title">
 
-                <p class="invitation-text">
-                    Samira would love to have you there
-                    to celebrate this special milestone
-                    together.
+                    <p class="invitation-pretitle">
+                        YOU ARE INVITED TO
+                    </p>
+
+                    <h1>
+                        Samira's
+                    </h1>
+
+                    <h2>
+                        <span>21st</span>
+                        Birthday
+                    </h2>
+
+                </div>
+
+
+                <div class="invitation-divider"></div>
+
+
+                <p class="invitation-message">
+                    An evening dedicated to celebrating
+                    another beautiful chapter,
+                    surrounded by the people who matter.
                 </p>
 
-                <div class="event-details">
 
-                    <div>
+                <!-- EVENT DETAILS -->
+                <div class="invitation-details">
+
+                    <div class="invitation-detail">
+
                         <span>DATE</span>
-                        <strong>COMING SOON</strong>
+
+                        <strong>
+                            03 OCTOBER 2026
+                        </strong>
+
                     </div>
 
-                    <div>
+
+                    <div class="invitation-detail">
+
                         <span>TIME</span>
-                        <strong>COMING SOON</strong>
+
+                        <strong>
+                            19:00
+                        </strong>
+
                     </div>
 
-                    <div>
+
+                    <div class="invitation-detail">
+
+                        <span>DRESS CODE</span>
+
+                        <strong>
+                            BLACK & ELEGANT
+                        </strong>
+
+                    </div>
+
+
+                    <div class="invitation-detail">
+
                         <span>LOCATION</span>
-                        <strong>COMING SOON</strong>
+
+                        <strong>
+                            TO BE COMMUNICATED
+                        </strong>
+
                     </div>
 
                 </div>
 
-                <p class="relationship">
-                    Your invitation has been prepared
-                    especially for you.
+
+                <p class="invitation-footer-text">
+                    The location will be shared with you soon.
                 </p>
+
+            </div>
+
+
+            <!-- BOTTOM -->
+            <div class="invitation-card-bottom">
+
+                <span>WITH LOVE</span>
+
+                <span>♡</span>
+
+                <span>SAMIRA</span>
 
             </div>
 
@@ -69,7 +130,6 @@ Your Invitation — Samira's 21st
 
 
         <!-- DOWNLOAD -->
-
         <div class="download-section">
 
             <button
@@ -89,12 +149,9 @@ Your Invitation — Samira's 21st
 
 
         <!-- RSVP -->
-
         <div class="rsvp-section">
 
-            <p class="eyebrow">
-                RSVP
-            </p>
+           
 
             <h2>
                 Will you<br>
@@ -117,26 +174,9 @@ Your Invitation — Samira's 21st
                     Yes, I'll be there
                 </button>
 
-                <button
-                    type="submit"
-                    name="response"
-                    value="maybe"
-                    class="rsvp-button"
-                >
-                    <span>02</span>
-                    I'm not sure yet
-                </button>
+                
 
-                <button
-                    type="submit"
-                    name="response"
-                    value="no"
-                    class="rsvp-button"
-                >
-                    <span>03</span>
-                    Sadly, I can't make it
-                </button>
-
+               
             </form>
 
         </div>
@@ -150,7 +190,6 @@ Your Invitation — Samira's 21st
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 <script>
-
 document
     .getElementById("download-invitation")
     .addEventListener("click", async function () {
@@ -159,48 +198,67 @@ document
         const button = this;
 
         button.disabled = true;
-        button.innerHTML = "Preparing invitation...";
+        button.innerHTML = "Preparing...";
 
         try {
 
             const canvas = await html2canvas(card, {
-                scale: 2,
+                scale: window.devicePixelRatio > 1 ? 2 : 1,
                 useCORS: true,
-                backgroundColor: "#f3f1ed"
+                allowTaint: false,
+                backgroundColor: "#111111",
+                logging: false
             });
 
-            const link = document.createElement("a");
+            // Convertir le canvas en fichier PNG
+            canvas.toBlob(function(blob) {
 
-            link.download =
-                "Samira-21st-Invitation-{{ guest.name|replace(' ', '-') }}.png";
+                if (!blob) {
+                    throw new Error("Impossible de créer l'image.");
+                }
 
-            link.href = canvas.toDataURL("image/png");
+                const url = URL.createObjectURL(blob);
 
-            link.click();
+                const link = document.createElement("a");
+
+                link.href = url;
+                link.download =
+                    "Samira-21st-Invitation-{{ guest.name|replace(' ', '-') }}.png";
+
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                // Libérer la mémoire
+                setTimeout(function() {
+                    URL.revokeObjectURL(url);
+                }, 1000);
+
+            }, "image/png");
 
         } catch (error) {
 
-            console.error(
-                "Unable to download invitation:",
-                error
-            );
+            console.error("Download error:", error);
 
             alert(
-                "Sorry, the invitation could not be downloaded."
+                "Le téléchargement automatique n'est pas disponible sur ce téléphone. " +
+                "Essayez avec Chrome ou Safari."
             );
 
         } finally {
 
-            button.disabled = false;
+            setTimeout(() => {
+                button.disabled = false;
 
-            button.innerHTML = `
-                Download my invitation
-                <span>↓</span>
-            `;
+                button.innerHTML = `
+                    Download my invitation
+                    <span>↓</span>
+                `;
+            }, 1000);
+
         }
 
     });
-
 </script>
 
 {% endblock %}
