@@ -132,21 +132,28 @@ Invitation — Samira's 21st
         <!-- DOWNLOAD -->
         <div class="download-section">
 
-            <button
-                type="button"
-                id="download-invitation"
-                class="download-button"
-            >
-                Download my invitation
-                <span>↓</span>
-            </button>
+    <button
+        type="button"
+        id="download-invitation"
+        class="download-button"
+    >
+        Download my invitation
+        <span>↓</span>
+    </button>
 
-            <p class="download-info">
-                Save your personalized invitation to your device.
-            </p>
+    <p class="download-info">
+        Save your personalized invitation to your device.
+    </p>
 
-        </div>
+    <a
+        href="{{ url_for('main.wishlist') }}"
+        class="wishlist-button"
+    >
+        Continue to wishlist
+        <span>→</span>
+    </a>
 
+</div>
 
         <!-- RSVP -->
         <div class="rsvp-section">
@@ -189,6 +196,8 @@ Invitation — Samira's 21st
 <!-- HTML2CANVAS -->
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
 <script>
 document
     .getElementById("download-invitation")
@@ -210,29 +219,75 @@ document
                 logging: false
             });
 
-            // Convertir le canvas en fichier PNG
-            canvas.toBlob(function(blob) {
+            canvas.toBlob(async function(blob) {
 
                 if (!blob) {
                     throw new Error("Impossible de créer l'image.");
                 }
 
-                const url = URL.createObjectURL(blob);
-
-                const link = document.createElement("a");
-
-                link.href = url;
-                link.download =
+                const filename =
                     "Samira-21st-Invitation-{{ guest.name|replace(' ', '-') }}.png";
 
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+                /*
+                 * MOBILE / IPHONE
+                 *
+                 * On utilise le menu de partage natif
+                 * au lieu de forcer le téléchargement.
+                 */
+                const file = new File(
+                    [blob],
+                    filename,
+                    {
+                        type: "image/png"
+                    }
+                );
 
-                // Libérer la mémoire
-                setTimeout(function() {
-                    URL.revokeObjectURL(url);
-                }, 1000);
+                if (
+                    navigator.share &&
+                    navigator.canShare &&
+                    navigator.canShare({
+                        files: [file]
+                    })
+                ) {
+
+                    try {
+
+                        await navigator.share({
+                            title: "Samira's 21st Invitation",
+                            text: "My invitation for Samira's 21st birthday",
+                            files: [file]
+                        });
+
+                    } catch (shareError) {
+
+                        /*
+                         * L'utilisateur peut fermer le menu
+                         * de partage sans erreur.
+                         */
+                        console.log("Share cancelled:", shareError);
+
+                    }
+
+                } else {
+
+                    /*
+                     * DESKTOP / navigateurs sans partage de fichier
+                     */
+                    const url = URL.createObjectURL(blob);
+
+                    const link = document.createElement("a");
+
+                    link.href = url;
+                    link.download = filename;
+
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    setTimeout(function() {
+                        URL.revokeObjectURL(url);
+                    }, 1000);
+                }
 
             }, "image/png");
 
@@ -241,19 +296,20 @@ document
             console.error("Download error:", error);
 
             alert(
-                "Le téléchargement automatique n'est pas disponible sur ce téléphone. " +
-                "Essayez avec Chrome ou Safari."
+                "Unable to save the invitation. Please try again."
             );
 
         } finally {
 
             setTimeout(() => {
+
                 button.disabled = false;
 
                 button.innerHTML = `
                     Download my invitation
                     <span>↓</span>
                 `;
+
             }, 1000);
 
         }

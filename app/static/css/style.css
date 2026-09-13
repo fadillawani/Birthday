@@ -1552,3 +1552,41 @@ select {
 .gift-link span {
     font-size: 17px;
 }
+
+.wishlist-button {
+    width: 100%;
+    margin-top: 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 18px 22px;
+
+    background: #f4f1eb;
+    color: #111;
+
+    text-decoration: none;
+
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+
+    border: 1px solid #f4f1eb;
+
+    transition:
+        background 0.3s ease,
+        color 0.3s ease,
+        transform 0.3s ease;
+}
+
+.wishlist-button span {
+    font-size: 18px;
+}
+
+.wishlist-button:hover {
+    background: transparent;
+    color: #f4f1eb;
+    transform: translateY(-2px);
+}
